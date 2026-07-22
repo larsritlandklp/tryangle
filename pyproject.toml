@@ -17,7 +17,14 @@ classifiers = [
     "Topic :: Office/Business :: Financial",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
-dependencies = ["chainladder>=0.8.24", "pandas>=2.0", "scikit-learn>1.4.2,<1.6", "numpy>=2"]
+dependencies = [
+    "chainladder>=0.8.24",
+    "pandas>=2.0",
+    "scikit-learn>1.4.2,<1.6",
+    "numpy>=2",
+    "optuna>=4.9.0",
+    "plotly>=6.9.0",
+]
 license = { text = "MPL-2.0" }
 requires-python = "==3.12.*"
 
