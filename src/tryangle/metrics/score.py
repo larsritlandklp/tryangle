@@ -7,7 +7,7 @@ import numpy as np
 from tryangle.metrics.base import get_actual_expected
 
 from sklearn.metrics._scorer import _BaseScorer
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import root_mean_squared_error
 
 
 class AVEScore(_BaseScorer):
@@ -15,9 +15,9 @@ class AVEScore(_BaseScorer):
 
     def __init__(
         self,
-        score_func=mean_squared_error,
+        score_func=root_mean_squared_error,
         sign=-1,
-        kwargs={"squared": False},
+        kwargs={},
         weighted=False,
     ):
         self.weighted = weighted
@@ -28,7 +28,7 @@ class AVEScore(_BaseScorer):
         return np.abs(
             X.triangle.latest_diagonal.to_frame().to_numpy()[:-1]
             - X_prior.triangle.latest_diagonal.to_frame().to_numpy()
-        )
+        ).ravel()
 
     def _score(self, method_caller, estimator, X, y_true=None, sample_weight=None):
         """Evaluate predicted target values for X relative to y_true."""  # TODO: Update docstring
