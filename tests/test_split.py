@@ -18,13 +18,57 @@ def test_split():
     tscv = TriangleSplit(n_splits=10)
     val_years = list(range(1988, 1998))
 
-    for i, (train_idx, _) in enumerate(tscv.split(X)):
+    for i, (train_idx, test_idx) in enumerate(tscv.split(X)):
         assert (
-            X[train_idx].triangle == triangle[triangle.valuation.year <= val_years[i]]
+            X[train_idx].triangle == triangle[triangle.valuation.year < val_years[i]]
         )
         assert (
             X[train_idx].sample_weight
-            == sample_weight[sample_weight.origin.year <= val_years[i]]
+            == sample_weight[sample_weight.origin.year < val_years[i]]
+        )
+        assert (
+            X[test_idx].triangle == triangle[triangle.valuation.year <= val_years[i]]
+        )
+
+
+def test_split_no_leakage():
+    """Train must not contain the diagonal being predicted (regression for #9)."""
+    X = load_sample("swiss")
+    triangle = X.triangle.copy()
+    tscv = TriangleSplit(n_splits=10)
+    val_years = list(range(1988, 1998))
+
+    for i, (train_idx, test_idx) in enumerate(tscv.split(X)):
+        assert val_years[i] not in set(triangle.valuation[train_idx].year)
+        assert set(train_idx) < set(test_idx)
+
+
+def test_split_max_train_size():
+    X = load_sample("swiss")
+    triangle = X.triangle.copy()
+    tscv = TriangleSplit(n_splits=10, max_train_size=3)
+    val_years = list(range(1988, 1998))
+
+    for i, (train_idx, test_idx) in enumerate(tscv.split(X)):
+        train_years = sorted(set(triangle.valuation[train_idx].year))
+        assert len(train_years) <= 3
+        assert max(train_years) == val_years[i] - 1
+        assert (
+            X[test_idx].triangle == triangle[triangle.valuation.year <= val_years[i]]
+        )
+
+
+def test_split_gap():
+    X = load_sample("swiss")
+    triangle = X.triangle.copy()
+    tscv = TriangleSplit(n_splits=10, gap=2)
+    val_years = list(range(1988, 1998))
+
+    for i, (train_idx, test_idx) in enumerate(tscv.split(X)):
+        train_years = sorted(set(triangle.valuation[train_idx].year))
+        assert max(train_years) == val_years[i] - 3
+        assert (
+            X[test_idx].triangle == triangle[triangle.valuation.year <= val_years[i]]
         )
 
 

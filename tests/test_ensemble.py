@@ -58,17 +58,17 @@ def test_compile(auto_ensemble, sample_data, data_dir):
 
     with open(data_dir.join("ia_sample_compile_true_actual.npy"), "rb") as f:
         true_actual = np.load(f, allow_pickle=True)
-        assert ens.actual_.shape == (3, 6, 1)
+        assert ens.actual_.shape == (3, 5, 1)
         assert np.allclose(ens.actual_, true_actual)
 
     with open(data_dir.join("ia_sample_compile_true_expected.npy"), "rb") as f:
         true_expected = np.load(f, allow_pickle=True)
-        assert ens.expected_.shape == (3, 6, 3)
+        assert ens.expected_.shape == (3, 5, 3)
         assert np.allclose(ens.expected_, true_expected)
 
     with open(data_dir.join("ia_sample_compile_true_t.npy"), "rb") as f:
         true_t = np.load(f, allow_pickle=True)
-        assert ens.t_.shape == (3, 6, 1)
+        assert ens.t_.shape == (3, 5, 1)
         assert np.allclose(ens.t_, true_t)
 
 
